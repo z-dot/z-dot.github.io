@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+
+<head>
+    <title>Integration Bee</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+        integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjs@8.0.0/lib/browser/math.min.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+</head>
+
+<body>
+    <div class="container fixed-top" style="height: 100%;">
+        <div id="center-equation" style="font-size: 10vmin; vertical-align: middle; height: 50%; max-height: 60vh">$$$$
+        </div>
+        <div style="height: 50%;">
+            <div class="row" id="teamCardHolder">
+            </div>
+            <div class="row">
+                <div class="col d-flex justify-content-center pt-3">
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-info" style="font-size: 1.25rem;" data-toggle="modal"
+                            data-target="#answerModal">Show answer</button>
+                        <button type="button" class="btn btn-secondary" style="font-size: 1.25rem;" data-toggle="modal"
+                            data-target="#modifyTeams">Modify teams</button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col d-flex justify-content-center pt-3">
+                    <div class="input-group" style="min-width: 280px; width: 25%">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Complexity:</span>
+                        </div>
+                        <input type="number" class="form-control" value="1" min="1" max="5" id="complexityBox">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="button" id="get-new-button"
+                                onClick="generateNewButtonPressed();">Generate
+                                new</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="answerModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="answerModalLabel">Answer</h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <span id="answer-equation" style="font-size: 10vmin; vertical-align: middle;">$$$$</span>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="modifyTeams">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="answerModalLabel">Modify teams</h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container" id="editTeams">
+                    </div>
+                    <div class="container d-flex align-items-center justify-content-center pt-3"><button type="button"
+                            class="btn btn-link" onClick="addTeam();">Add team</button></div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" id="saveChangesTeams"
+                        onclick="getValuesAndUpdate();">Save
+                        changes</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    MathJax = {
+        jax: ["input/TeX", "output/SVG"],
+        // loader: { load: ["input/tex", "output/chtml"] },
+        svg: {
+            scale: 1,                      // global scaling factor for all expressions
+            minScale: .5,                  // smallest scaling factor to use
+            mtextInheritFont: false,       // true to make mtext elements use surrounding font
+            merrorInheritFont: true,       // true to make merror text use surrounding font
+            mathmlSpacing: false,          // true for MathML spacing rules, false for TeX rules
+            skipAttributes: {},            // RFDa and other attributes NOT to copy to the output
+            exFactor: .5,                  // default size of ex in em units
+            displayAlign: 'center',        // default for indentalign when set to 'auto'
+            displayIndent: '0',            // default for indentshift when set to 'auto'
+            fontCache: 'local',            // or 'global' or 'none'
+            localID: null,                 // ID to use for local font cache (for single equation processing)
+            internalSpeechTitles: true,    // insert <title> tags with speech content
+            titleID: 0                     // initial id number to use for aria-labeledby titles
+        }
+    };
+
+
+
+    function Team(name, score = 0) {
+        this.name = name;
+        this.score = score;
+    };
+
+
+    var default_teams = [new Team("Team 1"), new Team("Team 2")];
+
+    var teams = default_teams;
+
+    function changeTeamScore(index, number) {
+        teams[index].score += number;
+        if (teams[index].score < 0) { teams[index].score = 0 };
+        updateTeams();
+    }
+
+    function updateTeams() {
+        var teams_display_main = [];
+        var teams_display_edit = [];
+        teams.forEach(function (team, index) {
+            teams_display_main.push(`<div class="col-sm">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title text-center">${team.name}</h5>
+                    <div class="mx-auto d-flex align-items-center justify-content-center"><span
+                            style="font-size: 3rem;">${team.score}</span></div>
+                    <div class="d-flex justify-content-center pt-2">
+                        <div class="btn-group w-50" role="group" aria-label="Basic example">
+                            <button type="button" class="btn btn-light" onClick="changeTeamScore(${index}, -1)"">-</button>
+                            <button type="button" class="btn btn-light" onClick="changeTeamScore(${index}, 1)">+</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>`);
+            teams_display_edit.push(`<div class="row pb-2">
+                <div class="col-1 d-flex align-items-center justify-content-center">
+                    <button type="button" class="close" onclick="deleteTeam(${index})">
+                        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-x"
+                            fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd"
+                                d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="col-7">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+
+                            <span class="input-group-text">Name: </span>
+                        </div>
+                        <input type="text" class="form-control" value="${team.name}" id="input-name-${index}">
+
+                    </div>
+                </div>
+                <div class="col-4 d-flex align-items-center">
+                    <div class="input-group">
+                        <div class="input-group-prepend"><span class="input-group-text">Score:</span></div>
+                        <input type="number" class="form-control" value="${team.score}" min="0" id="input-score-${index}">
+                    </div>
+                </div>
+            </div>`);
+        }
+        );
+        $("#teamCardHolder").html(teams_display_main.join(""));
+        $("#editTeams").html(teams_display_edit.join(""));
+    };
+
+    function getNewTeamsValues() {
+        teams.forEach(function (team, index) {
+            teams[index].name = $(`#input-name-${index}`).val();
+            teams[index].score = Number($(`#input-score-${index}`).val());
+        });
+    };
+
+    function getValuesAndUpdate() {
+        getNewTeamsValues();
+        updateTeams();
+    }
+
+    function deleteTeam(index) {
+        getNewTeamsValues();
+        teams.splice(index, 1);
+        updateTeams();
+    }
+
+    function addTeam() {
+        teams.push(new Team(`Team ${teams.length + 1}`));
+        updateTeams();
+    }
+
+
+    var latex_example = String.raw`\int_{-1}^{1} \sqrt{1-x^2}\ dx`;
+    var latex_example_answer = String.raw`\frac{\pi}{2}`;
+
+    function updateCenterExpression(latex) {
+        $("#center-equation").html(`$$${latex}$$`);
+    };
+
+    function updateAnswerExpression(latex) {
+        $("#answer-equation").html(`$$${latex}$$`);
+    };
+
+
+    updateCenterExpression(latex_example);
+    updateAnswerExpression(latex_example_answer);
+    updateTeams();
+
+    function getRndInteger(min, max, non_zero = false) {
+        var temp = Math.floor(Math.random() * (max - min)) + min;
+        if (non_zero) {
+            while (temp === 0) {
+                temp = Math.floor(Math.random() * (max - min)) + min;
+            }
+        }
+        return temp;
+    }
+
+    function selectRandom(sequence) {
+        return sequence[getRndInteger(0, sequence.length)];
+    }
+
+
+    // Generate expressions
+    const expressionGenerator = {
+        low_range: -2,
+        high_range: 5,
+        getRnd: function (non_zero = false) {
+            return getRndInteger(this.low_range, this.high_range, non_zero);
+        },
+        generateAtomic: function () {
+            const polynomial = function (obj) {
+                console.log("pol")
+                const variable = new math.SymbolNode("x");
+                const constant_term = new math.ConstantNode(obj.getRnd(true));
+                const power = new math.ConstantNode(obj.getRnd(true));
+                const var_to_power = new math.OperatorNode("^", "pow", [variable, power]);
+                const final = new math.OperatorNode("*", "multiply", [constant_term, var_to_power]);
+                return final;
+            };
+            const exponential = function (obj) {
+                console.log("exp")
+                const variable = new math.SymbolNode("x");
+                const constant_term_1 = new math.ConstantNode(obj.getRnd(true));
+                const var_multiplied = new math.OperatorNode("*", "multiply", [constant_term_1, variable]);
+                const constant_term_2 = new math.ConstantNode(obj.getRnd(true));
+                const exp_to_power = new math.OperatorNode("^", "pow", [math.parse("e"), var_multiplied]);
+                const final = new math.OperatorNode("*", "multiply", [constant_term_2, exp_to_power]);
+                return final;
+
+            };
+            const logarithm = function (obj) {
+                console.log("log")
+                const variable = new math.SymbolNode("x");
+                const power = new math.ConstantNode(obj.getRnd(true));
+                const coefficient = new math.ConstantNode(obj.getRnd(true));
+                const var_to_power = new math.OperatorNode("^", "pow", [variable, power]);
+                const log = new math.FunctionNode(new math.SymbolNode("log"), [var_to_power]);
+                const final = new math.OperatorNode("*", "multiply", [coefficient, log]);
+                return final;
+            };
+            possibles = [polynomial, exponential, logarithm];
+            return math.simplify(selectRandom(possibles)(this));
+        },
+        generateComplexity: function (complexity) {
+            if (complexity === 1) {
+                return this.generateAtomic();
+            };
+            const multiply = function (a, b) {
+                return new math.OperatorNode("*", "multiply", [a, b]);
+            };
+            const divide = function (a, b) {
+                return new math.OperatorNode("/", "divide", [a, b]);
+            };
+            const reciprocal = function (a, b) {
+                return new math.OperatorNode("/", "divide", [new math.ConstantNode(1), a]);
+            };
+            const exponential = function (a, b) {
+                const exponential_comp = new math.OperatorNode("^", "pow", [math.parse("e"), a]);
+                return new math.OperatorNode("*", "multiply", [exponential_comp, b]);
+            };
+            const log = function (a, b) {
+                return new math.FunctionNode(new math.SymbolNode("log"), [a]);
+            };
+            const add = function (a, b) {
+                return new math.OperatorNode("+", "add", [a, b]);
+            }
+            const combinations = [multiply, divide, reciprocal, exponential, log, add];
+            return selectRandom(combinations)(this.generateComplexity(complexity - 1), this.generateComplexity(1));
+        },
+        generateWhole: function (complexity) {
+            // TODO
+            var integ = this.generateComplexity(complexity);
+            var diff = math.derivative(integ, "x");
+            return [`\\int ${diff.toTex()} \\ \\mathrm{d}x`, integ.toTex()]
+        }
+    }
+
+    function trueTypeset() {
+        MathJax.typesetPromise().then(() => {
+            $("mjx-container > svg").attr("width", "100%");
+            $("mjx-container > svg").attr("height", "50vh");
+        });
+    }
+
+    function generateNew(complexity) {
+        var temp = expressionGenerator.generateWhole(complexity);
+        updateCenterExpression(temp[0]);
+        updateAnswerExpression(temp[1]);
+        trueTypeset();
+    }
+
+    function generateNewButtonPressed() {
+        var complexity = Number($("#complexityBox").val());
+        generateNew(complexity);
+    }
+
+    // for (i = 0; i < 10; i++) { var temp = expressionGenerator.generateAtomic(); console.log(temp); console.log(temp.toTex()) };
+
+</script>

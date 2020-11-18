@@ -58,25 +58,9 @@
                 <form action="https://send.pageclip.co/QtoDDiTlp6PEjx1Vw3mXIyQh6PW6UiRX/MCSPhilosophyHaikus2020"
                     class="pageclip-form" method="post"><input class="form-control" type="hidden"
                         value="mcs-philosophy-haiku-2020" name="form-occasion">
-                    <div class="form-group" style="margin-top: 2px;"><label>Choose your question:</label>
-                        <div class="form-check"><input class="form-check-input" type="radio" value="question1"
-                                name="question" id="formCheck-1" checked=""><label class="form-check-label"
-                                for="formCheck-1">Label</label></div>
-                        <div class="form-check"><input class="form-check-input" type="radio" value="question2"
-                                name="question" id="formCheck-2"><label class="form-check-label"
-                                for="formCheck-2">Label</label></div>
-                        <div class="form-check"><input class="form-check-input" type="radio" value="question3"
-                                name="question" id="formCheck-5"><label class="form-check-label"
-                                for="formCheck-1">Label</label></div>
-                        <div class="form-check"><input class="form-check-input" type="radio" value="question4"
-                                name="question" id="formCheck-6"><label class="form-check-label"
-                                for="formCheck-2">Label</label></div>
-                        <div class="form-check"><input class="form-check-input" type="radio" value="question5"
-                                name="question" id="formCheck-3"><label class="form-check-label"
-                                for="formCheck-1">Label</label></div>
-                        <div class="form-check"><input class="form-check-input" type="radio" value="question6"
-                                name="question" id="formCheck-4"><label class="form-check-label"
-                                for="formCheck-2">Label</label></div>
+                    <div class="form-group" style="margin-top: 2px;" id="checks">
+                        <label for="selector">Choose your question:</label>
+                        <select class="form-control" id="selector" name="question"></select>
                     </div>
                     <div class="form-group"><label for="haiku">Your haiku</label><textarea class="form-control"
                             name="haiku" rows="3" placeholder="Enter your haiku!" required></textarea></div>
@@ -86,8 +70,8 @@
                             name="houseroom" placeholder="Ma1a" required></div>
 
                     <div class="g-recaptcha" data-sitekey="6Lfek-QZAAAAAGHHP-f2Oj53ZaE26mDDy-or38v7"
-                        data-callback="valid"></div>
-                    <div class="d-flex justify-content-center"><button id="submitButton"
+                        data-callback="() => "></div>
+                    <div class="d-flex justify-content-center mt-3"><button id="submitButton"
                             class="pageclip-form__submit btn btn-primary" type="submit" disabled><span>Submit your
                                 haiku!</span></button></div>
                 </form>
@@ -101,6 +85,30 @@
     <script>
         function valid() {
             $('#submitButton').prop('disabled', false);
+        };
+        const questions = [
+            "Is it ever good to be angry?",
+            "Do you think in language?",
+            "What is music?",
+            "What is health?",
+            "What makes science special?",
+            "Could it ever be right to do more harm than good?",
+            "Would science be the same if we had different senses?",
+            "Does anything non-physical exist? How would you know?",
+            "What is a text?",
+            "Am I responsible for consequences I didn’t intend?",
+            "Can art reveal to us what is true?",
+            "Could you be friends with a robot?",
+            "Would you like to be immortal?",
+            "Are you responsible for all of your choices?",
+            "Can we give meaning to our own lives?",
+            "‘If Caesar had been alive today he would have used catapults’. ‘If Caesar had been alive today he would have used nuclear weapons’. Which is true?",
+            "Are the French word ‘international’ and the English word ‘international’ the same word?",
+            "Would you rather live in a democracy, or a tyranny led by Father Christmas?",
+            "If there were a pill that would make you happy for the rest of your life, would you take it?"
+        ];
+        for (let i = 0; i < questions.length; i += 1) {
+            $("#selector").append(`<option>${questions[i]}</option>`);
         }
     </script>
 </body>

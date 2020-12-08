@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>JSON editor</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.js"></script>
+</head>
+
+<body>
+    <div class="modal fade" role="dialog" tabindex="-3" id="generalAdviceModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">General advice</h4>
+                </div>
+                <div class="modal-body">
+                    <form id="form-general-advice">
+                        <label for="advice-area">General advice (in HTML): </label>
+                        <textarea name="advice-area" id="advice-area" cols="30" rows="10"
+                            class="form-control"></textarea>
+                    </form>
+                </div>
+                <div class="modal-footer"><button class="btn btn-light" type="button"
+                        data-dismiss="modal">Close</button><button class="btn btn-primary" type="button"
+                        onclick="submit_general_advice()">Save</button></div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" role="dialog" tabindex="-2" id="jsonModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Upload JSON</h4>
+                </div>
+                <div class="modal-body">
+                    <form id="form-json-upload">
+                        <textarea class="form-control" name="json-upload" id="json-upload"></textarea>
+                    </form>
+                </div>
+                <div class="modal-footer"><button class="btn btn-light" type="button"
+                        data-dismiss="modal">Close</button><button class="btn btn-primary" type="button"
+                        onclick="submit_json()">Save</button></div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" role="dialog" tabindex="-1" id="editModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Question edit</h4><button type="button" class="close" data-dismiss="modal"
+                        aria-label="Close"><span aria-hidden="true">×</span></button>
+                </div>
+                <div class="modal-body">
+                    <form id="form-question-edit">
+                        <div class="form-group"><label for="edit-question">Question</label><input class="form-control"
+                                type="text" name="edit-question" id="edit-question"></div>
+                        <div class="form-group"><label for="edit-tags">Tags (comma delineated)</label><textarea
+                                class="form-control" name="edit-tags" id="edit-tags"></textarea></div>
+                        <div class="form-group"><label for="edit-advice">Specific advice</label><textarea
+                                class="form-control" name="edit-advice" id="edit-advice"></textarea></div>
+                        <div class="form-group"><label for="edit-marks">Marks available</label><select
+                                class="custom-select" name="edit-marks" id="edit-marks">
+                                <option value="3" selected="">3</option>
+                                <option value="5">5</option>
+                                <option value="12">12</option>
+                                <option value="25">25</option>
+                            </select></div>
+                        <input type="hidden" value="" name="id" id="edit-id">
+                    </form>
+                </div>
+                <div class="modal-footer"><button class="btn btn-light" type="button"
+                        data-dismiss="modal">Close</button><button class="btn btn-primary" type="button"
+                        onclick="submit_edit_question()">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="d-lg-flex justify-content-lg-center">
+            <div class="btn-group" role="group" style="margin-top: 7px;margin-bottom: 5px;"><button
+                    class="btn btn-primary" type="button" onclick="show_json_modal()"><i
+                        class="fa fa-upload"></i></button><button class="btn btn-primary" type="button"
+                    onclick="add_question()"><i class="fa fa-plus"></i></button><button class="btn btn-primary"
+                    type="button" onclick="get_JSON_from_questions()"><i class="fa fa-download"></i></button>
+                <button class="btn btn-primary" type="button" onclick="open_general_advice_modal()"><i
+                        class="fa fa-file"></i></button>
+            </div>
+        </div>
+        <div id="questionholder">
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+</body>
+
+<script>
+    class QuestionData {
+        constructor(id) {
+            this.question = "Question";
+            this.tags = ["tag1", "tag2"];
+            this.marks = 3;
+            this.advice = "No advice yet";
+            this.id = id;
+        }
+        tags_to_comma_delineated() {
+            return this.tags.join(",")
+        }
+        get_html_row() {
+            return `<div class="row"
+                style="border-radius: 7px;border-width: 1px;border-style: solid;margin-bottom: 5px;margin-top: 5px;padding: 5px;">
+                <div class="col-9 d-lg-flex justify-content-lg-start align-items-lg-center">
+                    <h4>${this.question}</h4>
+                </div>
+                <div class="col-3 d-lg-flex justify-content-lg-center align-items-lg-center">
+                    <div class="btn-group" role="group"><button class="btn btn-primary" type="button" onclick="question_edit(${this.id})"><i
+                        class="fa fa-cog"></i></button><button class="btn btn-primary" type="button" onclick="question_delete(${this.id})"><i
+                            class="fa fa-trash"></i></button></div>
+                </div>
+            </div>`
+        }
+        get_information_for_edit_box() {
+            return {
+                question: this.question,
+                tags: this.tags_to_comma_delineated(),
+                marks: this.marks.toString(),
+                advice: this.advice,
+                id: this.id
+            }
+        }
+    }
+
+    var questions = [];
+    var id_counter = 0;
+    var general_advice = "";
+
+    function open_general_advice_modal() {
+        $("advice-area").val(general_advice);
+        $("#generalAdviceModal").modal("show");
+    }
+
+    function submit_general_advice() {
+        general_advice = $("advice-area").val();
+        $("#generalAdviceModal").modal("hide");
+    }
+
+
+    function refresh_items() {
+        $("#questionholder").html("");
+        for (question of questions) {
+            $("#questionholder").append(question.get_html_row());
+        }
+    }
+
+    function add_question() {
+        questions.push(new QuestionData(id_counter));
+        refresh_items();
+        id_counter++;
+    }
+
+    function question_edit(id) {
+        for (question of questions) {
+            if (question.id === id) {
+                const information = question.get_information_for_edit_box();
+                $("#edit-question").val(information.question);
+                $("#edit-tags").val(information.tags);
+                $("#edit-advice").val(information.advice);
+                $("#edit-marks").val(information.marks);
+                $("#edit-id").val(information.id);
+                $("#editModal").modal("show");
+                break;
+            }
+        }
+
+    }
+
+    function show_json_modal() {
+        $("#json-upload").val("");
+        $("#jsonModal").modal("show");
+    }
+
+    function submit_json() {
+        const raw = JSON.parse($("#json-upload").val());
+        questions = [];
+        for (question of raw.questions) {
+            var temp = new QuestionData(question.id);
+            temp.question = question.question;
+            temp.advice = question.advice;
+            temp.marks = question.marks;
+            temp.tags = question.tags;
+            questions.push(temp);
+        }
+        id_counter = raw.id_counter;
+        general_advice = raw.general_advice;
+        $("#jsonModal").modal("hide");
+        refresh_items();
+    }
+
+
+    function question_delete(id) {
+        for (i = 0; i < questions.length; i++) {
+            if (questions[i].id === id) {
+                questions.splice(i, 1);
+                refresh_items();
+                break;
+            }
+        }
+    }
+
+    function submit_edit_question() {
+        for (question of questions) {
+            if (question.id.toString() === $("#edit-id").val()) {
+                question.question = $("#edit-question").val();
+                question.tags = $("#edit-tags").val().split(",");
+                question.advice = $("#edit-advice").val();
+                question.marks = $("#edit-marks").val() * 1;
+                break;
+            }
+        }
+        $("#editModal").modal("hide");
+        refresh_items();
+    }
+
+
+
+    function get_JSON_from_questions() {
+        saveAs(new Blob([JSON.stringify({
+            questions: questions,
+            id_counter: id_counter,
+            general_advice: general_advice,
+        })], {
+            type: "application/json",
+            name: "questions.json"
+        }));
+    }
+</script>
+
+
+
+</html>

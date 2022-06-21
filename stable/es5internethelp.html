@@ -29,9 +29,9 @@ First things first - are you joining us as a guest, or are you a student or staf
 
 [[I&#39;m a guest-&gt;guest]]
 
-[[I&#39;m a member of staff or a student-&gt;studentOrStaff]]</tw-passagedata><tw-passagedata pid="2" name="connectmcsguest" tags="" position="1126,617.5" size="100,100">First step: please connect to the WiFi network named &quot;MCS-Guest&quot;.
+[[I&#39;m a member of staff or a student-&gt;studentOrStaff]]</tw-passagedata><tw-passagedata pid="2" name="connectmcsguest" tags="" position="1121,645.5" size="100,100">First step: please connect to the WiFi network named &quot;MCS-Guest&quot;.
 
-{reveal link: &quot;I can&#39;t find the **MCS-Guest** network!&quot;, text: &#39;There are many WiFi networks that overlap throughout the MCS site. If your device has a &quot;more networks&quot; setting, try looking there - if not, then [[contact MCS IT-&gt;contactIT]]&#39;}
+[[I can&#39;t find the **MCS-Guest** network!-&gt;staffCannotFindNetwork]]
 
 &gt; [[Continue-&gt;website]]</tw-passagedata><tw-passagedata pid="3" name="smthElse" tags="" position="1042,106.5" size="100,100">Are you sure? Almost all devices attempting to connect to the MCS network are one of the above. Just to confirm - are you sure your device doesn&#39;t fall into one of the below groups?
 
@@ -43,7 +43,7 @@ First things first - are you joining us as a guest, or are you a student or staf
 
 [[An Android phone or tablet-&gt;android1]]
 
-[[Honest to goodness, something else-&gt;contactIT]]</tw-passagedata><tw-passagedata pid="4" name="website" tags="" position="970,583.5" size="100,100">Excellent. Your device may have automatically opened a website - you should disregard this, **open your web browser (e.g. Safari or Chrome)** and navigate to **wifi.mcsoxford.org**.
+[[Honest to goodness, something else-&gt;contactIT]]</tw-passagedata><tw-passagedata pid="4" name="website" tags="" position="933,642.5" size="100,100">Excellent. Your device may have automatically opened a website - you should disregard this, **open your web browser (e.g. Safari or Chrome)** and navigate to **wifi.mcsoxford.org**.
 
 &gt; [[Continue-&gt;studentStaffLogin]]</tw-passagedata><tw-passagedata pid="5" name="studentOrStaff" tags="" position="1274,73.5" size="100,100">Excellent - you&#39;ll join the network as a staff member or student.
 
@@ -107,7 +107,7 @@ If you are satisfied, please tap &quot;Restart&quot; in the bottom right to rese
 
 Enter your details (your full name and email) to receive your login. Your screen should now say &quot;The details for your guest account are shown below. Your account is currently awaiting confirmation.&quot;
 
-&gt; [[Continue-&gt;approval]]</tw-passagedata><tw-passagedata pid="14" name="studentStaffLogin" tags="" position="802,630.5" size="100,100">Tap &quot;I am a Student or Staff member&quot;. Now enter your login details - your **MCS** username and password.
+&gt; [[Continue-&gt;approval]]</tw-passagedata><tw-passagedata pid="14" name="studentStaffLogin" tags="" position="720,668.5" size="100,100">Tap &quot;I am a Student or Staff member&quot;. Now enter your login details - your **MCS** username and password.
 
 Read and accept the terms of use.
 
@@ -117,9 +117,9 @@ If everything is correct, tap &quot;Log In&quot; to continue.
 
 &lt;% if(s.dev == &quot;windows&quot;){ %&gt;
 &gt; [[Continue-&gt;downloadClientWindows]]
-&lt;% else if(s.dev == &quot;macos&quot;){ %&gt;
+&lt;% } else if(s.dev == &quot;macos&quot;){ %&gt;
 &gt; [[Continue-&gt;downloadClientMacos]]
-&lt;% else if(s.dev == &quot;android&quot;){ %&gt;
+&lt;% } else if(s.dev == &quot;android&quot;){ %&gt;
 &gt; [[Continue-&gt;downloadClientAndroid]]
 &lt;% } else { %&gt;
 &gt; [[Continue-&gt;downloadClientIos]]
@@ -129,10 +129,9 @@ If everything is correct, tap &quot;Log In&quot; to continue.
 
 Now that you can access the internet, be sure to **forget** all other MCS WiFi networks except **MCS**. This ensures that you will automatically connect to the correct network.
 
-&gt; [[Restart-&gt;Introduction]]</tw-passagedata><tw-passagedata pid="17" name="downloadClientWindows" tags="" position="466,876.5" size="100,100">On Windows, the website should now show: &quot;Download and start the QuickConnect network configuration program&quot;. Click that button and run the application that downloads (named &quot;ArubaQuickConnect.exe&quot;).
+&gt; [[Restart-&gt;Introduction]]</tw-passagedata><tw-passagedata pid="17" name="downloadClientWindows" tags="" position="468,874.5" size="100,100">On Windows, the website should now show: &quot;Download and start the QuickConnect network configuration program&quot;. Click that button and run the application that downloads (named &quot;ArubaQuickConnect.exe&quot;).
 
 [[Help: nothing downloaded!-&gt;winNothingDownloaded]]
-You may have to allow the website to download multiple files. On Chrome, you can click the padlock to the left of the address bar and clicking &quot;Site settings&quot;. Then ensure that &quot;Automatic downloads&quot; is either on &quot;Ask&quot; or &quot;Allow&quot;, then try clicking the button again. If this persists, [[drop into the IT department-&gt;contactIT]].
 
 &gt; [[Continue-&gt;runWindowsClient]]</tw-passagedata><tw-passagedata pid="18" name="downloadClientMacos" tags="" position="662,866.5" size="100,100">Double-click this passage to edit it.</tw-passagedata><tw-passagedata pid="19" name="downloadClientAndroid" tags="" position="948,839.5" size="100,100">Double-click this passage to edit it.</tw-passagedata><tw-passagedata pid="20" name="downloadClientIos" tags="" position="1098,839.5" size="100,100">Double-click this passage to edit it.</tw-passagedata><tw-passagedata pid="21" name="runWindowsClient" tags="" position="351,652.5" size="100,100">You may be given a security warning when trying to open this file - double-check that you are running &quot;ArubaQuickConnect.exe&quot; and that the publisher is &quot;Hewlett Packard Enterprise Company&quot;, then **select &quot;Run&quot;**.
 
@@ -156,9 +155,11 @@ To proceed, **press &#39;Yes&#39;** in response to &quot;Do you want to install 
 
 &gt; [[Back-&gt;guest]]</tw-passagedata><tw-passagedata pid="24" name="guestConnectAnother" tags="" position="81,883.5" size="100,100">If you would like to connect another device, you can use the username and password displayed - after connecting to **wifi.mcsoxford.org** on your other device, tap &#39;I am a Visitor to MCS&#39; then &#39;Already have a guest account? Sign in here&#39;. Enter the username and password you&#39;ve just received, and you&#39;re good to go!
 
-&gt; [[Back-&gt;approval]] </tw-passagedata><tw-passagedata pid="25" name="winNothingDownloaded" tags="" position="477,595.5" size="100,100">You may have to allow the website to download multiple files. On Chrome, you can click the padlock to the left of the address bar and clicking &quot;Site settings&quot;. Then ensure that &quot;Automatic downloads&quot; is either on &quot;Ask&quot; or &quot;Allow&quot;, then try clicking the button again. If this persists, [[drop into the IT department-&gt;contactIT]].
+&gt; [[Back-&gt;approval]] </tw-passagedata><tw-passagedata pid="25" name="winNothingDownloaded" tags="" position="477,593.5" size="100,100">You may have to allow the website to download multiple files. On Chrome, you can click the padlock to the left of the address bar and clicking &quot;Site settings&quot;. Then ensure that &quot;Automatic downloads&quot; is either on &quot;Ask&quot; or &quot;Allow&quot;, then try clicking the button again. If this persists, [[drop into the IT department-&gt;contactIT]].
 
-&gt; [[Back-&gt;downloadClientWindows]] </tw-passagedata></tw-storydata>
+&gt; [[Back-&gt;downloadClientWindows]] </tw-passagedata><tw-passagedata pid="26" name="staffCannotFindNetwork" tags="" position="876,517.5" size="100,100">There are many WiFi networks that overlap throughout the MCS site. If your device has a &quot;more networks&quot; setting, try looking there - if not, then [[contact MCS IT-&gt;contactIT]]
+
+&gt; [[Back-&gt;connectmcsguest]] </tw-passagedata></tw-storydata>
 		<script>
 		(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 "use strict";window.either=function(){for(var n=[],t=0;t<arguments.length;t++)if(arguments[t]instanceof Array)for(var r=0;r<arguments[t].length;r++)n.push(arguments[t][r]);else n.push(arguments[t]);return n[_.random(n.length-1)]},window.hasVisited=function(){var n=null;if(1==arguments.length)return null!=(n=window.story.passage(arguments[0]))&&window.story.history.includes(n.id);for(var t=0;t<arguments.length;t++)if(null==(n=window.story.passage(arguments[t]))||0==window.story.history.includes(n.id))return!1;return!0},window.visited=function(){for(var n=[],t=[],r=0;r<arguments.length;r++){var e=window.story.passage(arguments[r]);null!=e&&(t=window.story.history.filter(function(n){return n==e.id})),n.push(t.length)}return Math.min.apply(Math,n)},window.renderToSelector=function(n,t){var r=window.story.passage(t);null!=r&&$(n).html(r.render())},window.getStyles=function(){return $.when.apply($,$.map(arguments,function(n){return $.get(n,function(n){$("<style>"+n+"</style>").appendTo("head")})}))};
